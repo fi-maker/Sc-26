@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sugarcheck/Initail%20login%20Module/home_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -9,67 +10,65 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final _email = TextEditingController();
-  final _password = TextEditingController();
-  bool _loading = false;
+  final TextEditingController email = TextEditingController();
+  final TextEditingController password = TextEditingController();
+  bool isLoading = false;
 
   Future<void> _login() async {
-    setState(() => _loading = true);
-    try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: _email.text.trim(),
-        password: _password.text,
+    setState(() => isLoading = true);
+
+    await Future.delayed(const Duration(seconds: 1));
+
+    // Demo login - accept any email/password
+    if (email.text.isNotEmpty && password.text.isNotEmpty) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('isLoggedIn', true);
+
+      if (mounted) {
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomePage()));
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter email and password')),
       );
-    } on FirebaseAuthException catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message ?? 'Login failed')));
     }
-    setState(() => _loading = false);
+
+    setState(() => isLoading = false);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey.shade100,
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image(image: const AssetImage('assets/sugarchecklogo.png'), height: 170),
+            const Text('SugarCheck', style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
             const SizedBox(height: 50),
             TextField(
-              controller: _email,
-              decoration: const InputDecoration(labelText: 'Email', border: OutlineInputBorder()),
+              controller: email,
+              decoration: const InputDecoration(
+                labelText: 'Email',
+                border: OutlineInputBorder(),
+              ),
             ),
             const SizedBox(height: 20),
             TextField(
-              controller: _password,
+              controller: password,
               obscureText: true,
-              decoration: const InputDecoration(labelText: 'Password', border: OutlineInputBorder()),
+              decoration: const InputDecoration(
+                labelText: 'Password',
+                border: OutlineInputBorder(),
+              ),
             ),
             const SizedBox(height: 30),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: _loading ? null : _login,
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.lightBlue, padding: const EdgeInsets.symmetric(vertical: 15)),
-                child: _loading ? const CircularProgressIndicator(color: Colors.white) : const Text('Login', style: TextStyle(fontSize: 18, color: Colors.white)),
+                onPressed: isLoading ? null : _login,
+                child: isLoading ? const CircularProgressIndicator() : const Text('Login'),
               ),
-            ),
-            const SizedBox(height: 20),
-            TextButton(
-              onPressed: () => Navigator.pushNamed(context, '/forgot-password'),
-              child: const Text('Forgot Password?'),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text("Don't have an account? "),
-                TextButton(
-                  onPressed: () => Navigator.pushNamed(context, '/signup'),
-                  child: const Text('Sign Up'),
-                ),
-              ],
             ),
           ],
         ),

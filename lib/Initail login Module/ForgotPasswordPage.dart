@@ -27,7 +27,9 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Reset Password'), backgroundColor: Colors.lightBlue),
+      appBar: AppBar(title: const Text('Reset Password',style: TextStyle(
+        color: Colors.white
+      ),), backgroundColor: Colors.lightBlue),
       backgroundColor: Colors.grey.shade100,
       body: Padding(
         padding: const EdgeInsets.all(20),
@@ -42,6 +44,8 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
             ElevatedButton(onPressed: () => Navigator.pop(context), child: const Text('Back to Login'))
           ]
               : [
+            Image(image: const AssetImage('assets/sugarchecklogo.png'), height: 170),
+            const SizedBox(height: 50),
             TextField(
               controller: _email,
               decoration: const InputDecoration(labelText: 'Email', border: OutlineInputBorder()),

@@ -35,13 +35,17 @@ class _SignUpPageState extends State<SignUpPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Sign Up'), backgroundColor: Colors.lightBlue),
+      appBar: AppBar(title: const Text('Sign Up',style: TextStyle(
+        color: Colors.white
+      ),), backgroundColor: Colors.lightBlue),
       backgroundColor: Colors.grey.shade100,
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            Image(image: const AssetImage('assets/sugarchecklogo.png'), height: 170),
+            const SizedBox(height: 40),
             TextField(
               controller: _email,
               decoration: const InputDecoration(labelText: 'Email', border: OutlineInputBorder()),
